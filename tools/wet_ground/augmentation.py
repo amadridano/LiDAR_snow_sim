@@ -238,7 +238,7 @@ def estimate_laser_parameters(pointcloud_planes, calculated_indicent_angle, powe
     idx = np.where(min_vals > 5)
     min_vals = min_vals[idx]
     idx1 = [i + 1 for i in idx]
-    x = (xedges[idx] + xedges[idx1]) / 2
+    x = (xedges[tuple(idx)] + xedges[tuple(idx1)]) / 2
 
     if estimation_method == 'poly':
         pmin = ransac_polyfit(x, min_vals, order=2)

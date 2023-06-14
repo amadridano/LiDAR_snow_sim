@@ -9,7 +9,7 @@ import numpy as np
 from sklearn.linear_model import RANSACRegressor
 
 
-def calculate_plane(pointcloud, standart_height=-1.55):
+def calculate_plane(pointcloud, standart_height=-2.3):
     """
     caluclates plane from loaded pointcloud
     returns the plane normal w and lidar height h.
@@ -18,8 +18,8 @@ def calculate_plane(pointcloud, standart_height=-1.55):
     """
 
     # Filter points which are close to ground based on mounting position
-    valid_loc = (pointcloud[:, 2] < -1.55) & \
-                (pointcloud[:, 2] > -1.86 - 0.01 * pointcloud[:, 0]) & \
+    valid_loc = (pointcloud[:, 2] < -2.3) & \
+                (pointcloud[:, 2] > -2.61- 0.01 * pointcloud[:, 0]) & \
                 (pointcloud[:, 0] > 10) & \
                 (pointcloud[:, 0] < 70) & \
                 (pointcloud[:, 1] > -3) & \

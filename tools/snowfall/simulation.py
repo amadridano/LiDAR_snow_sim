@@ -29,7 +29,7 @@ EPSILON = np.finfo(float).eps
 
 
 
-def get_calib(sensor: str = 'hdl64'):
+def get_calib(sensor: str = 'vlp32'):
     calib_file = Path(__file__).parent.parent.parent.absolute() / \
                  'lib' / 'OpenPCDet' / 'data' / 'dense' / f'calib_{sensor}.txt'
     assert calib_file.exists(), f'{calib_file} not found'
@@ -78,6 +78,7 @@ def process_single_channel(root_path: str, particle_file_prefix: str, orig_pc: n
     particle_file = f'{particle_file_prefix}_{index + 1}.npy'
 
     channel_mask = orig_pc[:, 4] == channel
+
     idx = np.where(channel_mask == True)[0]
 
     pc = orig_pc[channel_mask]
@@ -114,7 +115,7 @@ def process_single_channel(root_path: str, particle_file_prefix: str, orig_pc: n
     lidar_range_extended = lidar_range + c * tau_h
 
     R = np.round(np.linspace(0, lidar_range_extended, M_extended), len(str(intervals_per_meter)))
-
+    
     for j, beam_dict in enumerate(occlusion_list):
 
         d_orig = distance[j]
@@ -146,7 +147,8 @@ def process_single_channel(root_path: str, particle_file_prefix: str, orig_pc: n
                 end_index = int(np.floor((r_j + c * tau_h) * intervals_per_meter) + 1)
 
                 for k in range(start_index, end_index):
-                    i[k] += received_power(CA_P0, beta_0, ratio, R[k], r_j, tau_h)
+                    if k < len(i):
+                        i[k] += received_power(CA_P0, beta_0, ratio, R[k], r_j, tau_h)
 
             max_index = np.argmax(i)
             i_max = i[max_index]
@@ -488,7 +490,6 @@ def augment(pc: np.ndarray, particle_file_prefix: str, beam_divergence: float, s
     channel_list = [None] * num_channels
 
     if show_progressbar:
-
         channel_list[:] = process_map(functools.partial(process_single_channel, root_path, particle_file_prefix,
                                                         orig_pc, beam_divergence, order, channel_infos),
                                       channels, chunksize=4)
